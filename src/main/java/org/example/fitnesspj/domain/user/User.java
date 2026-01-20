@@ -7,6 +7,7 @@ import org.example.fitnesspj.global.common.BaseEntity;
 
 @Entity
 @Getter
+@Table(name = "users")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class User extends BaseEntity {
 

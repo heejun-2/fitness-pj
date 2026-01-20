@@ -1,7 +1,8 @@
-package org.example.fitnesspj.domain.user;
+package org.example.fitnesspj.api.users;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.fitnesspj.domain.user.UserService;
 import org.example.fitnesspj.domain.user.dto.SignUpRequest;
 import org.example.fitnesspj.domain.user.dto.SignUpResponse;
 import org.springframework.http.HttpStatus;
