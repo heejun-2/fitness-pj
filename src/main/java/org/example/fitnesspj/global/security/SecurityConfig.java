@@ -29,14 +29,25 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable());
 
         http
-                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http
+                // 접근 정책
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll()
-                .anyRequest().authenticated());
+                        .requestMatchers(
+                                "/api/users/signup",
+                                "/api/auth/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
+                        .anyRequest().authenticated());
 
-//        http
+        http
+                // 기본 로그인 폼/Basic 인증 끔
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable());
+//        http;
 //                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
