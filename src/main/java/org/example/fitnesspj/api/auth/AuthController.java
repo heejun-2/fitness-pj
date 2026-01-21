@@ -5,11 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.example.fitnesspj.api.auth.dto.LoginRequest;
 import org.example.fitnesspj.api.auth.dto.LoginResponse;
 import org.example.fitnesspj.application.auth.AuthService;
+import org.example.fitnesspj.global.security.UserPrincipal;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,5 +24,13 @@ public class AuthController {
         String token = authService.login(request.getEmail(), request.getPassword());
 
         return ResponseEntity.ok(new LoginResponse(token));
+    }
+
+    @GetMapping("/me")
+    public Map<String, Object> me(@AuthenticationPrincipal UserPrincipal principal) {
+        return Map.of(
+                "userId", principal.getUserId(),
+                "email", principal.getEmail()
+        );
     }
 }

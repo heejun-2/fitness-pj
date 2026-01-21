@@ -15,8 +15,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    //    private final JwtFilter jwtFilter;
 
+    private final JwtFilter jwtFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -47,8 +47,9 @@ public class SecurityConfig {
                 // 기본 로그인 폼/Basic 인증 끔
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable());
-//        http;
-//                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        http
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
