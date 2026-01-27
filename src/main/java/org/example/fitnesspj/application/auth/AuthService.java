@@ -3,6 +3,8 @@ package org.example.fitnesspj.application.auth;
 import lombok.RequiredArgsConstructor;
 import org.example.fitnesspj.domain.user.User;
 import org.example.fitnesspj.domain.user.UserRepository;
+import org.example.fitnesspj.global.exception.BusinessException;
+import org.example.fitnesspj.global.exception.ErrorCode;
 import org.example.fitnesspj.global.security.JwtProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,10 +22,10 @@ public class AuthService {
     public String login(String email, String rawPassword) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다."));
 
         if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
-            throw new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다.");
+            throw new BusinessException(ErrorCode.UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다.");
         }
 
         return jwtProvider.createAccessToken(user.getId(), user.getEmail());

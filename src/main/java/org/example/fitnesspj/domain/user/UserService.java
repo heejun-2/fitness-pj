@@ -2,6 +2,8 @@ package org.example.fitnesspj.domain.user;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.example.fitnesspj.global.exception.BusinessException;
+import org.example.fitnesspj.global.exception.ErrorCode;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +17,7 @@ public class UserService {
     public Long signUp(String email, String password, String nickname) {
 
         if (userRepository.existsByEmail(email)) {
-            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+            throw new BusinessException(ErrorCode.DUPLICATE_EMAIL);
         }
 
         String encodedPassword = passwordEncoder.encode(password);
