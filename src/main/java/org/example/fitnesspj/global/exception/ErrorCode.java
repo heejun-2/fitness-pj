@@ -8,6 +8,7 @@ public enum ErrorCode {
     // 400
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "INVALID_REQUEST", "요청 값이 올바르지 않습니다."),
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "DUPLICATE_EMAIL", "이미 사용 중인 이메일입니다."),
+    INVALID_WEEK_START(HttpStatus.BAD_REQUEST, "INVALID_WEEK_START","weekStart는 월요일이어야 합니다."),
     NOT_FOUND(HttpStatus.NOT_FOUND, "NOT_FOUND", "리소스를 찾을 수 없습니다."),
 
     // 401/403
