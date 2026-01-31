@@ -1,6 +1,7 @@
 package org.example.fitnesspj.application.stats;
 
 import lombok.RequiredArgsConstructor;
+import org.example.fitnesspj.api.stats.dto.ExercisePrResponse;
 import org.example.fitnesspj.api.stats.dto.WeeklyStatsResponse;
 import org.example.fitnesspj.domain.workout.WorkoutRepository;
 import org.example.fitnesspj.global.exception.BusinessException;
@@ -19,6 +20,7 @@ import java.util.List;
 public class StatsService {
     private final WorkoutRepository workoutRepository;
 
+    // 주간 통계
     public WeeklyStatsResponse getWeeklyStats(Long userId, LocalDate weekStart) {
 
         // weekStart가 월요인인지 확인
@@ -53,5 +55,26 @@ public class StatsService {
                 .totalVolume(totalVolume)
                 .volumeByCategory(byCategory)
                 .build();
+    }
+
+    // 종목별 최고 중량 조회
+    public List<ExercisePrResponse> getExercisePrs(Long userId) {
+
+        // DB에서 종목별 최고 중량을 집계해서 가져옴
+        List<Object[]> rows = workoutRepository.findExercisePrs(userId);
+
+        List<ExercisePrResponse> result = new ArrayList<>();
+
+        // Object[] → DTO로 변환
+        for (Object[] row : rows) {
+
+            Long exerciseId = (Long) row[0];      // e.id
+            String name     = (String) row[1];    // e.name
+            int bestWeight  = ((Number) row[2]).intValue(); // max(weight)
+
+            result.add(new ExercisePrResponse(exerciseId, name, bestWeight));
+        }
+
+        return result;
     }
 }

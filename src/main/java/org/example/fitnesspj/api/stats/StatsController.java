@@ -1,6 +1,7 @@
 package org.example.fitnesspj.api.stats;
 
 import lombok.RequiredArgsConstructor;
+import org.example.fitnesspj.api.stats.dto.ExercisePrResponse;
 import org.example.fitnesspj.api.stats.dto.WeeklyStatsResponse;
 import org.example.fitnesspj.application.stats.StatsService;
 import org.example.fitnesspj.global.security.UserPrincipal;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,4 +29,12 @@ public class StatsController {
     ) {
         return ResponseEntity.ok(statsService.getWeeklyStats(principal.getUserId(), weekStart));
     }
+
+    @GetMapping("/prs")
+    public ResponseEntity<List<ExercisePrResponse>> exercisePrs(@AuthenticationPrincipal UserPrincipal principal) {
+
+        // 인증된 사용자 ID로만 PR 조회
+        return ResponseEntity.ok(statsService.getExercisePrs(principal.getUserId()));
+    }
+
 }

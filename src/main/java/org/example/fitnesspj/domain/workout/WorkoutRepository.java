@@ -23,6 +23,7 @@ public interface WorkoutRepository extends JpaRepository<Workout, Long> {
     """)
     List<Workout> findAllByUserIdAndDateFetchJoin(@Param("userId") Long userId, @Param("date") LocalDate date);
 
+
     // 기간 조회
     @Query("""
         select distinct w
@@ -48,8 +49,10 @@ public interface WorkoutRepository extends JpaRepository<Workout, Long> {
         """)
     Optional<Workout> findDetailByIdAndUserIdFetchJoin(@Param("workoutId") Long workoutId, @Param("userId") Long userId);
 
+
     // 삭제
     long deleteByIdAndUserId(Long workoutId, Long userId);
+
 
     // 주간 통계
     @Query("""
@@ -76,4 +79,20 @@ public interface WorkoutRepository extends JpaRepository<Workout, Long> {
         order by coalesce(sum(sr.weight * sr.reps), 0) desc
     """)
     List<Object[]> findWeeklyVolumeByCategory(@Param("userId") Long userId, @Param("from") LocalDate from, @Param("to") LocalDate to);
+
+
+    // 종목별 최고 중량 조회
+    @Query("""
+        select
+            e.id,
+            e.name,
+            max(sr.weight)
+        from Workout w
+        join w.setRecords sr
+        join sr.exercise e
+        where w.user.id = :userId
+        group by e.id, e.name
+        order by max(sr.weight) desc
+    """)
+    List<Object[]> findExercisePrs(@Param("userId") Long userId);
 }
