@@ -2,6 +2,7 @@ package org.example.fitnesspj.application.dashboard;
 
 import lombok.RequiredArgsConstructor;
 import org.example.fitnesspj.api.dashboard.dto.DashboardResponse;
+import org.example.fitnesspj.api.dashboard.dto.RecentWorkoutSummaryResponse;
 import org.example.fitnesspj.api.stats.dto.ExercisePrResponse;
 import org.example.fitnesspj.api.stats.dto.WeeklyStatsResponse;
 import org.example.fitnesspj.application.stats.StatsService;
@@ -35,9 +36,13 @@ public class DashboardService {
         // 종목별 PR 조회
         List<ExercisePrResponse> prs = statsService.getExercisePrs(userId);
 
+        // 이번 주 최근 운동 3개(요약)
+        List<RecentWorkoutSummaryResponse> recent = statsService.getRecentWorkoutsOfWeek(userId, weekStart);
+
         return DashboardResponse.builder()
                 .weeklyStats(weeklyStats)
                 .exercisePrs(prs)
+                .recentWorkouts(recent)
                 .build();
     }
 }

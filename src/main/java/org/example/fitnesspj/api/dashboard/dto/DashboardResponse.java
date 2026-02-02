@@ -11,9 +11,12 @@ import java.util.List;
 @Builder
 public class DashboardResponse {
 
-    // [블록 기능] 주간 요약 통계(운동일수, 총세트, 총볼륨, 카테고리별 볼륨 등)
+    // 주간 요약 통계(운동일수, 총세트, 총볼륨, 카테고리별 볼륨 등)
     private WeeklyStatsResponse weeklyStats;
 
-    // [블록 기능] 종목별 PR(최고중량) 리스트
+    // 종목별 PR(최고중량) 리스트
     private List<ExercisePrResponse> exercisePrs;
+
+    // 이번 주 최근 운동 3개 요약(대시보드 카드용)
+    private List<RecentWorkoutSummaryResponse> recentWorkouts;
 }

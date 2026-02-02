@@ -1,5 +1,6 @@
 package org.example.fitnesspj.domain.workout;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -95,4 +96,31 @@ public interface WorkoutRepository extends JpaRepository<Workout, Long> {
         order by max(sr.weight) desc
     """)
     List<Object[]> findExercisePrs(@Param("userId") Long userId);
+
+    // 이번 주 최근 운동 3개
+    @Query("""
+            select
+                w.id,
+                w.workoutDate,
+                w.memo,
+                count(sr.id),
+                coalesce(sum(sr.weight * sr.reps), 0)
+            from Workout w
+            join w.setRecords sr
+            where w.user.id = :userId
+              and w.workoutDate between :from and :to
+            group by w.id, w.workoutDate, w.memo
+            order by w.workoutDate desc, w.id desc
+        """)
+    List<Object[]> findRecentWorkoutSummariesInPeriod(
+            // 사용자 기준 필터
+            @Param("userId") Long userId,
+
+            // 주간 범위(weekStart ~ weekEnd)
+            @Param("from") LocalDate from,
+            @Param("to") LocalDate to,
+
+            // 최근 3개 제한을 위해 Pageable 사용
+            Pageable pageable
+    );
 }

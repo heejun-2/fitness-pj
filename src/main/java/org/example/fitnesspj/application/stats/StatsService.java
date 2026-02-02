@@ -1,11 +1,13 @@
 package org.example.fitnesspj.application.stats;
 
 import lombok.RequiredArgsConstructor;
+import org.example.fitnesspj.api.dashboard.dto.RecentWorkoutSummaryResponse;
 import org.example.fitnesspj.api.stats.dto.ExercisePrResponse;
 import org.example.fitnesspj.api.stats.dto.WeeklyStatsResponse;
 import org.example.fitnesspj.domain.workout.WorkoutRepository;
 import org.example.fitnesspj.global.exception.BusinessException;
 import org.example.fitnesspj.global.exception.ErrorCode;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,6 +75,31 @@ public class StatsService {
             int bestWeight  = ((Number) row[2]).intValue(); // max(weight)
 
             result.add(new ExercisePrResponse(exerciseId, name, bestWeight));
+        }
+
+        return result;
+    }
+
+    // 최근 운동 3개
+    public List<RecentWorkoutSummaryResponse> getRecentWorkoutsOfWeek(Long userId, LocalDate weekStart) {
+
+        // 주간 범위 계산
+        LocalDate weekEnd = weekStart.plusDays(6);
+
+        // 최근 3개 제한(Pageable로 제한)
+        List<Object[]> rows = workoutRepository.findRecentWorkoutSummariesInPeriod(userId, weekStart, weekEnd, PageRequest.of(0, 3));
+
+        // Object[] 결과를 DTO로 변환
+        List<RecentWorkoutSummaryResponse> result = new ArrayList<>();
+
+        for (Object[] r : rows) {
+            Long workoutId = (Long) r[0];
+            LocalDate workoutDate = (LocalDate) r[1];
+            String memo = (String) r[2];
+            long setCount = ((Number) r[3]).longValue();
+            long totalVolume = ((Number) r[4]).longValue();
+
+            result.add(new RecentWorkoutSummaryResponse(workoutId, workoutDate, memo, setCount, totalVolume));
         }
 
         return result;
