@@ -8,6 +8,7 @@ import org.example.fitnesspj.api.workout.dto.WorkoutResponse;
 import org.example.fitnesspj.domain.exercise.Exercise;
 import org.example.fitnesspj.domain.exercise.ExerciseRepository;
 import org.example.fitnesspj.domain.record.SetRecord;
+import org.example.fitnesspj.domain.record.SetRecordRepository;
 import org.example.fitnesspj.domain.user.User;
 import org.example.fitnesspj.domain.user.UserRepository;
 import org.example.fitnesspj.domain.workout.Workout;
@@ -27,6 +28,7 @@ public class WorkoutService {
     private final WorkoutRepository workoutRepository;
     private final UserRepository userRepository;
     private final ExerciseRepository exerciseRepository;
+    private final SetRecordRepository setRecordRepository;
 
     public Long createWorkout(Long userId, WorkoutCreateRequest request) {
 
@@ -111,6 +113,44 @@ public class WorkoutService {
             throw new BusinessException(ErrorCode.NOT_FOUND);
         }
     }
+
+    // 메모 수정
+    @Transactional
+    public WorkoutResponse updateWorkoutMemo(Long userId, Long workoutId, String memo) {
+
+        // 본인 기록인지 확인하면서 수정할 엔티티 조회
+        Workout workout = workoutRepository.findByIdAndUserId(workoutId, userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.WORKOUT_NOT_FOUND));
+
+        // 엔티티 상태 변경(영속 상태에서 변경 → 커밋 시 UPDATE)
+        workout.changeMemo(memo);
+
+        // 수정 후 응답 반환을 위해 상세 조회 형태로 변환
+        // 주의: setRecords까지 포함한 응답을 원하면 fetch join 상세조회 메서드를 재사용하는 게 좋음
+        // LAZY 문제 방지 위해 상세 fetch join으로 다시 조회
+        Workout updated = workoutRepository.findDetailByIdAndUserIdFetchJoin(workoutId, userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.WORKOUT_NOT_FOUND));
+
+        return toWorkoutResponse(updated);
+    }
+
+    // 세트 수정
+    @Transactional
+    public WorkoutResponse updateSetRecord(Long userId, Long workoutId, Long setRecordId, Integer weight, Integer reps) {
+
+        SetRecord sr = setRecordRepository.findByIdAndWorkoutIdAndUserId(setRecordId, workoutId, userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.SET_RECORD_NOT_FOUND));
+
+        if(weight != null) sr.changeWeight(weight);
+        if(reps != null) sr.changeReps(reps);
+
+        Workout workout = workoutRepository.findDetailByIdAndUserIdFetchJoin(workoutId, userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.WORKOUT_NOT_FOUND));
+
+        return toWorkoutResponse(workout);
+    }
+
+
 
     private List<WorkoutResponse> toWorkoutResponses(List<Workout> workouts) {
         List<WorkoutResponse> responses = new ArrayList<>();

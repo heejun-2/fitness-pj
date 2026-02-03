@@ -2,10 +2,7 @@ package org.example.fitnesspj.api.workout;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.fitnesspj.api.workout.dto.WorkoutCreateRequest;
-import org.example.fitnesspj.api.workout.dto.WorkoutCreateResponse;
-import org.example.fitnesspj.api.workout.dto.WorkoutDailyGroupResponse;
-import org.example.fitnesspj.api.workout.dto.WorkoutResponse;
+import org.example.fitnesspj.api.workout.dto.*;
 import org.example.fitnesspj.application.workout.WorkoutService;
 import org.example.fitnesspj.global.exception.BusinessException;
 import org.example.fitnesspj.global.exception.ErrorCode;
@@ -69,4 +66,22 @@ public class WorkoutController {
         return ResponseEntity.noContent().build();
     }
 
+    // 메모 수정
+    @PatchMapping("/{workoutId}/memo")
+    public ResponseEntity<WorkoutResponse> updateMemo(@AuthenticationPrincipal UserPrincipal principal,
+                                                      @PathVariable Long workoutId,
+                                                      @Valid @RequestBody WorkoutMemoUpdateRequest request) {
+
+        return ResponseEntity.ok(workoutService.updateWorkoutMemo(principal.getUserId(), workoutId, request.getMemo()));
+    }
+
+    // 세트 수정
+    @PatchMapping("/{workoutId}/sets/{setRecordId}")
+    public ResponseEntity<WorkoutResponse> updateSet(@AuthenticationPrincipal UserPrincipal principal,
+                                                     @PathVariable Long workoutId,
+                                                     @PathVariable Long setRecordId,
+                                                     @Valid @RequestBody SetRecordUpdateRequest request) {
+
+        return ResponseEntity.ok(workoutService.updateSetRecord(principal.getUserId(), workoutId, setRecordId, request.getWeight(), request.getReps()));
+    }
 }

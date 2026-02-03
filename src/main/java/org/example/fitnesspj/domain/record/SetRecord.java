@@ -44,4 +44,12 @@ public class SetRecord {
     public void assignWorkout(Workout workout) {
         this.workout = workout;
     }
+
+    public void changeWeight(int weight) {
+        this.weight = weight;
+    }
+
+    public void changeReps(int reps) {
+        this.reps = reps;
+    }
 }

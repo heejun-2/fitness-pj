@@ -46,4 +46,9 @@ public class Workout {
         setRecord.assignWorkout(this);
     }
 
+    public void changeMemo(String memo) {
+        // 엔티티 내부에서 상태 변경을 캡슐화
+        this.memo = memo;
+    }
+
 }

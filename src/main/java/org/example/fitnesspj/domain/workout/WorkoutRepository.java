@@ -123,4 +123,8 @@ public interface WorkoutRepository extends JpaRepository<Workout, Long> {
             // 최근 3개 제한을 위해 Pageable 사용
             Pageable pageable
     );
+
+    // 수정 대상 조회 + 권한 체크(내 기록만)
+    Optional<Workout> findByIdAndUserId(Long workoutId, Long userId);
+
 }
