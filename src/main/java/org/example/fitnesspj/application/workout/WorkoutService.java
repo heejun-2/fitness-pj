@@ -150,6 +150,17 @@ public class WorkoutService {
         return toWorkoutResponse(workout);
     }
 
+    // 세트삭제
+    @Transactional
+    public void deleteSetRecord(Long userId, Long workoutId, Long setRecordId){
+        SetRecord sr = setRecordRepository.findByIdAndWorkoutIdAndUserId(setRecordId, workoutId, userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.SET_RECORD_NOT_FOUND));
+
+        Workout workout = sr.getWorkout();
+
+        // 부모 컬렉션에서 제거 → orphanRemoval로 DB DELETE 발생
+        workout.removeSetRecord(sr);
+    }
 
 
     private List<WorkoutResponse> toWorkoutResponses(List<Workout> workouts) {

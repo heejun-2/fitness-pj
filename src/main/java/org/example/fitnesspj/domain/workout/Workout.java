@@ -51,4 +51,13 @@ public class Workout {
         this.memo = memo;
     }
 
+    public void removeSetRecord(SetRecord setRecord) {
+
+        // 컬렉션에서 제거 (orphanRemoval 트리거)
+        this.setRecords.remove(setRecord);
+
+        // 연관관계 끊기 (양방향 관계 정리)
+        setRecord.setWorkout(null);
+    }
+
 }

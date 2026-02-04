@@ -4,11 +4,13 @@ package org.example.fitnesspj.domain.record;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.example.fitnesspj.domain.exercise.Exercise;
 import org.example.fitnesspj.domain.workout.Workout;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class SetRecord {
     @Id

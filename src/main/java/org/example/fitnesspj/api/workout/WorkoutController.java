@@ -84,4 +84,15 @@ public class WorkoutController {
 
         return ResponseEntity.ok(workoutService.updateSetRecord(principal.getUserId(), workoutId, setRecordId, request.getWeight(), request.getReps()));
     }
+
+    // 세트 삭제
+    @DeleteMapping("/{workoutId}/sets/{setRecordId}")
+    public ResponseEntity<Void> deleteSet(@AuthenticationPrincipal UserPrincipal principal,
+                                          @PathVariable Long workoutId,
+                                          @PathVariable Long setRecordId){
+
+        workoutService.deleteSetRecord(principal.getUserId(), workoutId, setRecordId);
+
+        return ResponseEntity.noContent().build();
+    }
 }
