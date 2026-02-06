@@ -60,4 +60,12 @@ public class Workout {
         setRecord.setWorkout(null);
     }
 
+    public void addSetRecord(SetRecord setRecord) {
+
+        // 양방향 연관관계 설정
+        this.setRecords.add(setRecord);
+
+        setRecord.setWorkout(this);
+    }
+
 }

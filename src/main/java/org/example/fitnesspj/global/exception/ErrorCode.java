@@ -12,6 +12,7 @@ public enum ErrorCode {
     NOT_FOUND(HttpStatus.NOT_FOUND, "NOT_FOUND", "리소스를 찾을 수 없습니다."),
     WORKOUT_NOT_FOUND(HttpStatus.NOT_FOUND, "NOT_FOUND", "운동기록을 찾을 수 없습니다."),
     SET_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "NOT_FOUND", "세트 기록을 찾을 수 없습니다."),
+    EXERCISE_NOT_FOUND(HttpStatus.NOT_FOUND, "NOT_FOUND", "운동 종목을 찾을 수 없습니다."),
 
     // 401/403
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "인증이 필요합니다."),

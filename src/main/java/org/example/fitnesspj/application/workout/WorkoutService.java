@@ -162,6 +162,34 @@ public class WorkoutService {
         workout.removeSetRecord(sr);
     }
 
+    // 세트 추가
+    @Transactional
+    public WorkoutResponse addSetRecord(Long userId, Long workoutId, Long exerciseId, int weight, int reps) {
+
+        // 내 workout인지 확인
+        Workout workout = workoutRepository.findByIdAndUserId(workoutId, userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.WORKOUT_NOT_FOUND));
+
+        // 운동 종목 조회
+        Exercise exercise = exerciseRepository.findById(exerciseId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.EXERCISE_NOT_FOUND));
+
+        // 다음 setOrder 계산
+        int nextOrder = workout.getSetRecords().size() + 1;
+
+        // SetRecord 생성
+        SetRecord sr = SetRecord.create(exercise, weight, reps, nextOrder);
+
+        // Workout에 연결 (cascade로 자동 저장됨)
+        workout.addSetRecord(sr);
+
+        // 상세 재조회(fetch join) 후 응답
+        Workout updated = workoutRepository.findDetailByIdAndUserIdFetchJoin(workoutId, userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.WORKOUT_NOT_FOUND));
+
+        return toWorkoutResponse(updated);
+    }
+
 
     private List<WorkoutResponse> toWorkoutResponses(List<Workout> workouts) {
         List<WorkoutResponse> responses = new ArrayList<>();

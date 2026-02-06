@@ -95,4 +95,16 @@ public class WorkoutController {
 
         return ResponseEntity.noContent().build();
     }
+
+    // 세트 추가
+    @PostMapping("/{workoutId}/sets")
+    public ResponseEntity<WorkoutResponse> addSet(@AuthenticationPrincipal UserPrincipal principal,
+                                                  @PathVariable Long workoutId,
+                                                  @Valid @RequestBody SetRecordCreateRequest request
+    ) {
+        return ResponseEntity.ok(
+                workoutService.addSetRecord(principal.getUserId(), workoutId, request.getExerciseId(), request.getWeight(), request.getReps()
+                )
+        );
+    }
 }
