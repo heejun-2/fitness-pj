@@ -104,6 +104,37 @@ public class WorkoutService {
         return toWorkoutResponse(workout);
     }
 
+    // 운동 기록 수정
+    @Transactional
+    public void updateWorkout(Long userId, Long workoutId, WorkoutCreateRequest request
+    ) {
+
+        // 1️⃣ 기존 운동 조회 (본인 것만)
+        Workout workout = workoutRepository
+                .findByIdAndUserId(workoutId, userId)
+                .orElseThrow(() -> new IllegalArgumentException("운동 기록 없음"));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // 2️⃣ 기본 정보 수정
+        workout = Workout.create(user, request.getWorkoutDate(), request.getMemo());
+
+        // 3️⃣ 기존 세트 전부 삭제
+        setRecordRepository.deleteByWorkoutId(workoutId);
+
+        // 4️⃣ 새 세트 등록
+        for (WorkoutCreateRequest.SetCreateRequest s : request.getSets()) {
+
+            Exercise exercise = exerciseRepository.findById(s.getExerciseId())
+                    .orElseThrow(() -> new IllegalArgumentException("운동 종목을 찾을 수 없습니다. id=" + s.getExerciseId()));
+
+            SetRecord record = SetRecord.create(exercise, s.getWeight(), s.getReps(), s.getSetOrder());
+            workout.addSet(record); // 연관관계 편의 메서드 (cascade로 같이 저장됨)
+        }
+        workoutRepository.save(workout);
+    }
+
 
     // 삭제
     public void deleteWorkout(Long userId, Long workoutId){

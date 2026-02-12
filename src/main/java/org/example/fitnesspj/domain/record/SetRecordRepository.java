@@ -25,4 +25,6 @@ public interface SetRecordRepository extends JpaRepository<SetRecord, Long> {
             // 본인 데이터만 수정 가능하도록 userId 검증
             @Param("userId") Long userId
     );
+
+    void deleteByWorkoutId(Long workoutId);
 }

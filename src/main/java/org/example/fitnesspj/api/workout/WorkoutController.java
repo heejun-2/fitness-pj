@@ -66,6 +66,19 @@ public class WorkoutController {
         return ResponseEntity.noContent().build();
     }
 
+    // 운동 기록 수정
+    @PutMapping("/{workoutId}")
+    public ResponseEntity<Void> update(@AuthenticationPrincipal UserPrincipal principal, @PathVariable Long workoutId, @RequestBody @Valid WorkoutCreateRequest request
+    ) {
+        workoutService.updateWorkout(
+                principal.getUserId(),
+                workoutId,
+                request
+        );
+
+        return ResponseEntity.noContent().build();
+    }
+
     // 메모 수정
     @PatchMapping("/{workoutId}/memo")
     public ResponseEntity<WorkoutResponse> updateMemo(@AuthenticationPrincipal UserPrincipal principal,
