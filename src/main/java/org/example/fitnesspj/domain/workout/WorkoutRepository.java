@@ -10,6 +10,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface WorkoutRepository extends JpaRepository<Workout, Long> {
+
+    interface WeeklySummaryView {
+        long getWorkoutDays();
+        long getWorkoutCount();
+        long getSetCount();
+        long getTotalVolume();
+    }
     List<Workout> findAllByUserIdAndWorkoutDate(Long userId, LocalDate date);
 
     // 날짜 조회
@@ -58,16 +65,16 @@ public interface WorkoutRepository extends JpaRepository<Workout, Long> {
     // 주간 통계
     @Query("""
         select
-            count(distinct w.workoutDate),
-            count(distinct w.id),
-            count(sr.id),
-            coalesce(sum(sr.weight * sr.reps), 0)
+            count(distinct w.workoutDate) as workoutDays,
+            count(distinct w.id) as workoutCount,
+            count(sr.id) as setCount,
+            coalesce(sum(sr.weight * sr.reps), 0) as totalVolume
         from Workout w
         join w.setRecords sr
         where w.user.id = :userId
           and w.workoutDate between :from and :to
     """)
-    Object[] findWeeklySummary(@Param("userId") Long userId, @Param("from") LocalDate from, @Param("to") LocalDate to);
+    WeeklySummaryView findWeeklySummary(@Param("userId") Long userId, @Param("from") LocalDate from, @Param("to") LocalDate to);
 
     @Query("""
         select e.category, coalesce(sum(sr.weight * sr.reps), 0)

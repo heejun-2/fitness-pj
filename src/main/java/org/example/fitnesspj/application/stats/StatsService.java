@@ -32,12 +32,13 @@ public class StatsService {
 
         LocalDate weekEnd = weekStart.plusDays(6);
 
-        Object[] summary = workoutRepository.findWeeklySummary(userId, weekStart, weekEnd);
+        WorkoutRepository.WeeklySummaryView summary =
+                workoutRepository.findWeeklySummary(userId, weekStart, weekEnd);
 
-        long workoutDays  = ((Number) summary[0]).longValue();
-        long workoutCount = ((Number) summary[1]).longValue();
-        long setCount     = ((Number) summary[2]).longValue();
-        long totalVolume  = ((Number) summary[3]).longValue();
+        long workoutDays  = (summary != null) ? summary.getWorkoutDays() : 0L;
+        long workoutCount = (summary != null) ? summary.getWorkoutCount() : 0L;
+        long setCount     = (summary != null) ? summary.getSetCount() : 0L;
+        long totalVolume  = (summary != null) ? summary.getTotalVolume() : 0L;
 
         List<Object[]> rows = workoutRepository.findWeeklyVolumeByCategory(userId, weekStart, weekEnd);
         List<WeeklyStatsResponse.CategoryVolume> byCategory = new ArrayList<>();
