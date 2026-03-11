@@ -1,6 +1,7 @@
 package org.example.fitnesspj.application.dashboard;
 
 import lombok.RequiredArgsConstructor;
+import org.example.fitnesspj.api.dashboard.dto.DailyVolumeResponse;
 import org.example.fitnesspj.api.dashboard.dto.DashboardResponse;
 import org.example.fitnesspj.api.dashboard.dto.RecentWorkoutSummaryResponse;
 import org.example.fitnesspj.api.stats.dto.ExercisePrResponse;
@@ -39,10 +40,14 @@ public class DashboardService {
         // 이번 주 최근 운동 3개(요약)
         List<RecentWorkoutSummaryResponse> recent = statsService.getRecentWorkoutsOfWeek(userId, weekStart);
 
+        // 일자별 기록
+        List<DailyVolumeResponse> daily = statsService.getWeeklyDailyVolume(userId, weekStart);
+
         return DashboardResponse.builder()
                 .weeklyStats(weeklyStats)
                 .exercisePrs(prs)
                 .recentWorkouts(recent)
+                .dailyVolume(daily)
                 .build();
     }
 }

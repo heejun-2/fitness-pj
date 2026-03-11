@@ -1,6 +1,7 @@
 package org.example.fitnesspj.global.exception.GlobalExceptionHandler;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.example.fitnesspj.global.exception.BusinessException;
 import org.example.fitnesspj.global.exception.ErrorCode;
 import org.example.fitnesspj.global.exception.ErrorResponse;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -97,7 +99,7 @@ public class GlobalExceptionHandler {
     // 5) 예상 못한 예외 (500)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpected(Exception e, HttpServletRequest request) {
-
+        log.error("INTERNAL_ERROR at {} {}", request.getMethod(), request.getRequestURI(), e);
         ErrorCode code = ErrorCode.INTERNAL_ERROR;
 
         ErrorResponse body = ErrorResponse.builder()

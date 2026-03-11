@@ -1,5 +1,6 @@
 package org.example.fitnesspj.domain.workout;
 
+import org.example.fitnesspj.api.dashboard.dto.DailyVolumeResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -134,4 +135,23 @@ public interface WorkoutRepository extends JpaRepository<Workout, Long> {
     // 수정 대상 조회 + 권한 체크(내 기록만)
     Optional<Workout> findByIdAndUserId(Long workoutId, Long userId);
 
+    // 일자별 운동기록
+    @Query("""
+        select new org.example.fitnesspj.api.dashboard.dto.DailyVolumeResponse(
+            w.workoutDate,
+            sum(sr.weight * sr.reps),
+            count(sr.id)
+        )
+        from SetRecord sr
+        join sr.workout w
+        where w.user.id = :userId
+          and w.workoutDate between :start and :end
+        group by w.workoutDate
+        order by w.workoutDate
+    """)
+    List<DailyVolumeResponse> findDailyVolume(
+            @Param("userId") Long userId,
+            @Param("start") LocalDate start,
+            @Param("end") LocalDate end
+    );
 }

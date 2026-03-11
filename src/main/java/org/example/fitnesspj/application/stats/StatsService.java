@@ -1,6 +1,7 @@
 package org.example.fitnesspj.application.stats;
 
 import lombok.RequiredArgsConstructor;
+import org.example.fitnesspj.api.dashboard.dto.DailyVolumeResponse;
 import org.example.fitnesspj.api.dashboard.dto.RecentWorkoutSummaryResponse;
 import org.example.fitnesspj.api.stats.dto.ExercisePrResponse;
 import org.example.fitnesspj.api.stats.dto.WeeklyStatsResponse;
@@ -15,6 +16,8 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -101,6 +104,32 @@ public class StatsService {
             long totalVolume = ((Number) r[4]).longValue();
 
             result.add(new RecentWorkoutSummaryResponse(workoutId, workoutDate, memo, setCount, totalVolume));
+        }
+
+        return result;
+    }
+
+    public List<DailyVolumeResponse> getWeeklyDailyVolume(Long userId, LocalDate weekStart) {
+
+        if (weekStart.getDayOfWeek() != DayOfWeek.MONDAY) {
+            throw new BusinessException(ErrorCode.INVALID_WEEK_START);
+        }
+
+        LocalDate weekEnd = weekStart.plusDays(6);
+
+        List<DailyVolumeResponse> rows = workoutRepository.findDailyVolume(userId, weekStart, weekEnd);
+
+        Map<LocalDate, DailyVolumeResponse> map = rows.stream().collect(Collectors.toMap(DailyVolumeResponse::getDate, r -> r));
+
+        List<DailyVolumeResponse> result = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            LocalDate d = weekStart.plusDays(i);
+            DailyVolumeResponse r = map.get(d);
+            if (r == null) {
+                result.add(new DailyVolumeResponse(d, 0L, 0L));
+            } else {
+                result.add(r);
+            }
         }
 
         return result;

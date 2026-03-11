@@ -19,4 +19,7 @@ public class DashboardResponse {
 
     // 이번 주 최근 운동 3개 요약(대시보드 카드용)
     private List<RecentWorkoutSummaryResponse> recentWorkouts;
+
+    // 주간 일자별 볼륨/세트 (월~일 7개)
+    private List<DailyVolumeResponse> dailyVolume;
 }
