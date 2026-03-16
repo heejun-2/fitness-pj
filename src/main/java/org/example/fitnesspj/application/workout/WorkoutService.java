@@ -221,6 +221,15 @@ public class WorkoutService {
         return toWorkoutResponse(updated);
     }
 
+    // 월별 운동 기록 날짜 조회
+    @Transactional(readOnly = true)
+    public List<LocalDate> getWorkoutDatesOfMonth(Long userId, int year, int month) {
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+        return workoutRepository.findWorkoutDatesByUserIdAndMonth(userId, startDate, endDate);
+    }
+
 
     private List<WorkoutResponse> toWorkoutResponses(List<Workout> workouts) {
         List<WorkoutResponse> responses = new ArrayList<>();

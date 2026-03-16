@@ -120,4 +120,16 @@ public class WorkoutController {
                 )
         );
     }
+
+    // 월별 운동 기록 날짜 조회
+    @GetMapping("/dates")
+    public ResponseEntity<List<LocalDate>> getWorkoutDates(@AuthenticationPrincipal UserPrincipal principal, @RequestParam int year, @RequestParam int month) {
+        List<LocalDate> dates = workoutService.getWorkoutDatesOfMonth(
+                principal.getUserId(),
+                year,
+                month
+        );
+
+        return ResponseEntity.ok(dates);
+    }
 }

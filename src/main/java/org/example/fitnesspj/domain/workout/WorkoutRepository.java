@@ -154,4 +154,20 @@ public interface WorkoutRepository extends JpaRepository<Workout, Long> {
             @Param("start") LocalDate start,
             @Param("end") LocalDate end
     );
+
+    /**
+     * 특정 유저의 특정 월 운동 날짜만 중복 없이 조회
+     */
+    @Query("""
+        select distinct w.workoutDate
+        from Workout w
+        where w.user.id = :userId
+          and w.workoutDate between :startDate and :endDate
+        order by w.workoutDate
+    """)
+    List<LocalDate> findWorkoutDatesByUserIdAndMonth(
+            @Param("userId") Long userId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
 }
