@@ -170,4 +170,7 @@ public interface WorkoutRepository extends JpaRepository<Workout, Long> {
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    // 최근 운동 조회
+    Optional<Workout> findTopByUserIdOrderByWorkoutDateDescIdDesc(Long userId);
 }

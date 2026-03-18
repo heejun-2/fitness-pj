@@ -132,4 +132,13 @@ public class WorkoutController {
 
         return ResponseEntity.ok(dates);
     }
+
+    // 최근 운동 기록 조회
+    @GetMapping("/latest")
+    public ResponseEntity<WorkoutResponse> getLatestWorkout(@AuthenticationPrincipal UserPrincipal principal){
+
+        WorkoutResponse response = workoutService.getLatestWorkout(principal.getUserId());
+
+        return ResponseEntity.ok(response);
+    }
 }

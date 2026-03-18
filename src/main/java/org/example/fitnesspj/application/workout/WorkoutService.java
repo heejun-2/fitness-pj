@@ -231,6 +231,17 @@ public class WorkoutService {
     }
 
 
+    // 최근 운동 기록 조회
+    @Transactional(readOnly = true)
+    public WorkoutResponse getLatestWorkout(Long userId) {
+        Workout workout = workoutRepository.findTopByUserIdOrderByWorkoutDateDescIdDesc(userId)
+                .orElseThrow(() -> new IllegalArgumentException("최근 운동 기록이 없습니다."));
+
+        return toWorkoutResponse(workout);
+    }
+
+
+
     private List<WorkoutResponse> toWorkoutResponses(List<Workout> workouts) {
         List<WorkoutResponse> responses = new ArrayList<>();
 
