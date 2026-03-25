@@ -43,4 +43,13 @@ public class WorkoutTemplate extends BaseEntity {
         templateSets.add(templateSet);
         templateSet.assignTemplate(this);
     }
+
+    public void changeDetails(String name, String memo) {
+        this.name = name;
+        this.memo = memo;
+    }
+
+    public void clearTemplateSets() {
+        templateSets.clear();
+    }
 }

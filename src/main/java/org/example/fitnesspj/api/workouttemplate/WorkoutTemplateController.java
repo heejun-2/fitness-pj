@@ -36,6 +36,17 @@ public class WorkoutTemplateController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PutMapping("/{templateId}")
+    public ResponseEntity<WorkoutTemplateResponse> updateTemplate(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @PathVariable Long templateId,
+            @Valid @RequestBody WorkoutTemplateCreateRequest request
+    ) {
+        return ResponseEntity.ok(
+                workoutTemplateService.updateTemplate(principal.getUserId(), templateId, request)
+        );
+    }
+
     @DeleteMapping("/{templateId}")
     public ResponseEntity<Void> deleteTemplate(
             @AuthenticationPrincipal UserPrincipal principal,

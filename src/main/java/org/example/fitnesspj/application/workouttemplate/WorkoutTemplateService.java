@@ -49,7 +49,31 @@ public class WorkoutTemplateService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND));
 
         WorkoutTemplate template = WorkoutTemplate.create(user, request.getName(), request.getMemo());
+        applyTemplateSets(template, request);
 
+        WorkoutTemplate saved = workoutTemplateRepository.save(template);
+        return toResponse(saved);
+    }
+
+    public WorkoutTemplateResponse updateTemplate(Long userId, Long templateId, WorkoutTemplateCreateRequest request) {
+        WorkoutTemplate template = workoutTemplateRepository.findByIdAndUserId(templateId, userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.WORKOUT_TEMPLATE_NOT_FOUND));
+
+        template.changeDetails(request.getName(), request.getMemo());
+        template.clearTemplateSets();
+        applyTemplateSets(template, request);
+
+        return toResponse(template);
+    }
+
+    public void deleteTemplate(Long userId, Long templateId) {
+        WorkoutTemplate template = workoutTemplateRepository.findByIdAndUserId(templateId, userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.WORKOUT_TEMPLATE_NOT_FOUND));
+
+        workoutTemplateRepository.delete(template);
+    }
+
+    private void applyTemplateSets(WorkoutTemplate template, WorkoutTemplateCreateRequest request) {
         for (WorkoutTemplateCreateRequest.SetRequest setRequest : request.getSets()) {
             Exercise exercise = exerciseRepository.findById(setRequest.getExerciseId())
                     .orElseThrow(() -> new BusinessException(ErrorCode.EXERCISE_NOT_FOUND));
@@ -62,16 +86,6 @@ public class WorkoutTemplateService {
             );
             template.addTemplateSet(templateSet);
         }
-
-        WorkoutTemplate saved = workoutTemplateRepository.save(template);
-        return toResponse(saved);
-    }
-
-    public void deleteTemplate(Long userId, Long templateId) {
-        WorkoutTemplate template = workoutTemplateRepository.findByIdAndUserId(templateId, userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.WORKOUT_TEMPLATE_NOT_FOUND));
-
-        workoutTemplateRepository.delete(template);
     }
 
     private WorkoutTemplateResponse toResponse(WorkoutTemplate template) {
